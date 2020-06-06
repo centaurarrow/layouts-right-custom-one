@@ -1,9 +1,8 @@
-import { createWidget } from 'discourse/widgets/widget';
+import { createLayoutsWidget } from 'discourse/plugins/discourse-layouts/discourse/lib/layouts';
+import { scheduleOnce } from "@ember/runloop";
+import { h } from 'virtual-dom';
 
-export default createWidget('right-custom-html-one', {
-  tagName: 'div.right-custom-html-one.widget-container',
-  buildKey: () => 'right-custom-html-one',
-
+export default createLayoutsWidget('right-custom-html-one', {
   defaultState() {
     return {
       renderScheduled: false
@@ -11,7 +10,6 @@ export default createWidget('right-custom-html-one', {
   },
 
   html(attrs, state) {
-    console.log('right-custom-html-one');
     if (!state.renderScheduled) {
       let html = this.siteSettings.layouts_right_custom_html_one;
 
@@ -20,12 +18,11 @@ export default createWidget('right-custom-html-one', {
         html = category.layouts_right_custom_html_one;
       }
 
-      Ember.run.scheduleOnce('afterRender', this, function() {
-        $("div.right-custom-html-one").html('');
+      scheduleOnce('afterRender', this, function() {
         $("div.right-custom-html-one").append(`<div class='contents'>${html}</div>`);
       });
-    //  state.renderScheduled = true;
+      state.renderScheduled = true;
     }
-    return '';
+    return h('div.right-custom-html-one');
   }
 });
